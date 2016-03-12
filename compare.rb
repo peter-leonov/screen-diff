@@ -40,17 +40,38 @@ def parse width, diff
   spacer = '255 ' * width + "\n"
   a = []
   b = []
-  
+  minus = 0
+  plus = 0
+  add = proc do
+    if minus < plus
+      (plus - minus).times do
+        a << spacer
+      end
+    elsif minus > plus
+      (minus - plus).times do
+        b << spacer
+      end
+    end
+    minus = 0
+    plus = 0
+  end
+
   loop do
-    line = diff.shift or break
+    if diff.empty?
+      add.call()
+      break
+    end
+    line = diff.shift
     if line[0] == ' '
+      add.call()
       a << line[1..-1]
       b << line[1..-1]
     elsif line[0] == '-'
-      
+      a << line[1..-1]
+      minus += 1
     elsif line[0] == '+'
-      a << spacer
       b << line[1..-1]
+      plus += 1
     end
   end
   
