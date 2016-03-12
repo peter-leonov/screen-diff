@@ -1,13 +1,10 @@
 #!/usr/bin/env ruby
 
-# raise 'three args needed: a b diff' unless ARGV.length == 3
+def main file_a, file_b, file_diff
+  system(*%W{convert #{file_a} -compress none tmp/a.pgm})
+  system(*%W{convert #{file_b} -compress none tmp/b.pgm})
 
-def main
-  system('convert a.png -compress none a.pgm')
-  system('convert b.png -compress none b.pgm')
-  system('diff -U10000 --minimal a.pgm b.pgm > diff.pgm')
-
-  diff = File.readlines('diff.pgm')
+  diff = `diff -U10000 --minimal tmp/a.pgm tmp/b.pgm`.lines
   raise 'empty diff' if diff.empty?
 
   head = diff.shift(3)
@@ -28,12 +25,13 @@ def main
 
   a, b = parse(width, diff)
 
-  write 'da.pgm', width, colors, a
-  write 'db.pgm', width, colors, b
+  write 'tmp/da.pgm', width, colors, a
+  write 'tmp/db.pgm', width, colors, b
+  system('convert tmp/da.pgm tmp/da.png')
+  system('convert tmp/db.pgm tmp/db.png')
 
-  system('convert da.pgm da.png')
-  system('convert db.pgm db.png')
-  system('compare da.png db.png png:- | montage -geometry +4+0 a.png - b.png ddiff.png')
+  system('compare tmp/da.png tmp/db.png tmp/diff.png')
+  system(*%W{montage -geometry +4+0 #{file_a} tmp/diff.png #{file_b} #{file_diff}})
 end
 
 
@@ -88,4 +86,5 @@ def write name, width, colors, lines
   end
 end
 
-main
+raise 'three args needed: a b diff' unless ARGV.length == 3
+main *ARGV
