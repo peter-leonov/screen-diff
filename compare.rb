@@ -33,6 +33,7 @@ def main
 
   system('convert da.pgm da.png')
   system('convert db.pgm db.png')
+  system('compare da.png db.png png:- | montage -geometry +4+0 a.png - b.png ddiff.png')
 end
 
 
@@ -88,5 +89,3 @@ def write name, width, colors, lines
 end
 
 main
-
-# compare a.png b.png png:- | montage -geometry +4+0 a.png - b.png diff.png
