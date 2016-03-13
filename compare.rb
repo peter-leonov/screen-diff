@@ -37,6 +37,8 @@ end
 
 def parse width, diff
   spacer = ([65535] * (width * 3)).join(' ') + "\n"
+  last_line_a = spacer
+  last_line_b = spacer
   a = []
   b = []
   minus = 0
@@ -44,10 +46,10 @@ def parse width, diff
   add = proc do
     if minus < plus
       # puts "#{minus} < #{plus}"
-      (plus - minus).times { a << spacer }
+      (plus - minus).times { a << last_line_a }
     elsif minus > plus
       # puts "#{minus} > #{plus}"
-      (minus - plus).times { b << spacer }
+      (minus - plus).times { b << last_line_b }
     else
       # puts "#{minus} = #{plus}"
     end
@@ -64,15 +66,15 @@ def parse width, diff
     if line[0] == ' '
       # puts ' '
       add.call()
-      a << line[1..-1]
-      b << line[1..-1]
+      a << last_line_a = line[1..-1]
+      b << last_line_b = line[1..-1]
     elsif line[0] == '-'
       # puts '-'
-      a << line[1..-1]
+      a << last_line_a = line[1..-1]
       minus += 1
     elsif line[0] == '+'
       # puts '+'
-      b << line[1..-1]
+      b << last_line_b = line[1..-1]
       plus += 1
     end
   end
