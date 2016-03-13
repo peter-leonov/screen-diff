@@ -43,9 +43,13 @@ def parse width, diff
   plus = 0
   add = proc do
     if minus < plus
+      # puts "#{minus} < #{plus}"
       (plus - minus).times { a << spacer }
     elsif minus > plus
+      # puts "#{minus} > #{plus}"
       (minus - plus).times { b << spacer }
+    else
+      # puts "#{minus} = #{plus}"
     end
     minus = 0
     plus = 0
@@ -58,13 +62,16 @@ def parse width, diff
     end
     line = diff.shift
     if line[0] == ' '
+      # puts ' '
       add.call()
       a << line[1..-1]
       b << line[1..-1]
     elsif line[0] == '-'
+      # puts '-'
       a << line[1..-1]
       minus += 1
     elsif line[0] == '+'
+      # puts '+'
       b << line[1..-1]
       plus += 1
     end
