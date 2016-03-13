@@ -31,7 +31,7 @@ def main file_a, file_b, file_diff
   system('./rgb.rb load tmp/db.rgb tmp/db.png')
 
   system('compare tmp/da.png tmp/db.png tmp/diff.png')
-  system(*%W{montage -geometry +4+0 #{file_a} tmp/diff.png #{file_b} #{file_diff}})
+  system(*%W{montage -geometry +4+0 tmp/da.png tmp/diff.png tmp/db.png #{file_diff}})
 end
 
 
