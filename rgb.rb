@@ -35,11 +35,11 @@ end
 
 case ARGV.shift
 when 'dump'
-  raise 'rgb dump: one arg needed: source.img' unless ARGV.length == 1
-  dump ARGV.first, STDOUT
+  raise 'rgb dump: two args needed: src.img dump.rgb' unless ARGV.length == 2
+  dump ARGV[0], ARGV[1] == '-' ? STDOUT : File.open(ARGV[1], 'w')
 when 'load'
-  raise 'rgb load: one arg needed: dst' unless ARGV.length == 1
-  load STDIN, ARGV.first
+  raise 'rgb load: two args needed: dump.rgb dst.img' unless ARGV.length == 2
+  load ARGV[0] == '-' ? STDIN : File.open(ARGV[0], 'r'), ARGV[1]
 else
-  raise 'usage: rgb dump source.img | process | rgb load dest.img'
+  raise 'usage: rgb dump source.img - | process | rgb load - dest.img'
 end
