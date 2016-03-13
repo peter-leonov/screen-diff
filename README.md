@@ -21,6 +21,10 @@ If montage warning bothers you [install ghostscript](http://stackoverflow.com/qu
 
     brew install ghostscript
 
+Or, if you don't want to bloat your system with ImageMagick run the script using Docker:
+
+    docker run -it -v $(pwd):/v peterleonov/screen-compare ./compare.rb /v/a.png /v/b.png /v/diff.png
+
 
 # Why write comparison tool?
 
