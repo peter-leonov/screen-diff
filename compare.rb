@@ -1,10 +1,14 @@
 #!/usr/bin/env ruby
+require 'tmpdir'
+require 'fileutils'
 
 def main file_a, file_b, file_diff
-  system(*%W{./rgb.rb dump #{file_a} tmp/a.rgb})
-  system(*%W{./rgb.rb dump #{file_b} tmp/b.rgb})
+  tmp = Dir.mktmpdir("compare-rb")
 
-  diff = `diff -U10000 --minimal tmp/a.rgb tmp/b.rgb`.lines
+  system(*%W{./rgb.rb dump #{file_a} #{tmp}/a.rgb})
+  system(*%W{./rgb.rb dump #{file_b} #{tmp}/b.rgb})
+
+  diff = `diff -U10000 --minimal #{tmp}/a.rgb #{tmp}/b.rgb`.lines
   raise 'empty diff' if diff.empty?
 
   head = diff.shift(3)
@@ -25,13 +29,15 @@ def main file_a, file_b, file_diff
 
   a, b = parse(width, diff)
 
-  write 'tmp/da.rgb', width, colors, a
-  write 'tmp/db.rgb', width, colors, b
-  system('./rgb.rb load tmp/da.rgb tmp/da.png')
-  system('./rgb.rb load tmp/db.rgb tmp/db.png')
+  write "#{tmp}/da.rgb", width, colors, a
+  write "#{tmp}/db.rgb", width, colors, b
+  system(*%W{./rgb.rb load #{tmp}/da.rgb #{tmp}/da.png})
+  system(*%W{./rgb.rb load #{tmp}/db.rgb #{tmp}/db.png})
 
-  system('compare tmp/da.png tmp/db.png tmp/diff.png')
-  system(*%W{montage -geometry +4+0 tmp/da.png tmp/diff.png tmp/db.png #{file_diff}})
+  system(*%W{compare #{tmp}/da.png #{tmp}/db.png #{tmp}/diff.png})
+  system(*%W{montage -geometry +4+0 #{tmp}/da.png #{tmp}/diff.png #{tmp}/db.png #{file_diff}})
+ensure
+  FileUtils.remove_entry tmp
 end
 
 
