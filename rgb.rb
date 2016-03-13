@@ -5,7 +5,8 @@ def dump file_src, io_dst
   img = Magick::Image.read(file_src).first
   w = img.columns
   h = img.rows
-  io_dst.puts "RGB #{w} #{h}"
+  io_dst.puts "RGB"
+  io_dst.puts "#{w} #{h}"
   h.times do |y|
     # x, y, columns, rows -> array
     io_dst.puts img.export_pixels(0, y, w, 1, 'RGB').join(' ')
@@ -13,9 +14,10 @@ def dump file_src, io_dst
 end
 
 def load io_src, file_dst
-  header = io_src.gets
-  _, format, w, h = /^(RGB) (\d+) (\d+)/.match(header).to_a
+  format = io_src.readline.chomp
   raise 'wrong format' unless format == 'RGB'
+  _, w, h = /^(\d+) (\d+)/.match(io_src.readline).to_a
+  raise 'wrong format' unless w && h
   w = w.to_i
   h = h.to_i
 
