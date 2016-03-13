@@ -1,5 +1,22 @@
 This tool is a (very slow ruby based) prototype for a screenshots diffing tool which deals well with shots of different height. It is used in a CI script to control the markup regressions using readable image comparison.
 
+# Usage
+
+Prerequisites:
+
+    brew install imagemagick
+    brew install ruby
+    gem install bundler
+
+Run:
+
+    git clone https://github.com/peter-leonov/screen-diff.git
+    cd screen-diff
+    bundle
+    ./compare.rb tests/1/b.png tests/1/a.png diff.png
+    # montage: unable to read font bla-bla…
+    open diff.png
+
 # Why write comparison tool?
 
 Reason to invent the wheel is that ImageMagick's `compare` tool refuses to compare images of mismatching dimensions. The approach made in this tool is to use real textual `diff` command to find rows of two images where a difference starts and then patch the gap with a spacer in a way optimised for diffing interfaces (web pages, applications, anything of fixed width). The result is a pair of the original images but now of the same height then compared by ImageMagick's compare.
