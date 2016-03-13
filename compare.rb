@@ -5,8 +5,8 @@ require 'fileutils'
 def main file_a, file_b, file_diff
   tmp = Dir.mktmpdir("compare-rb")
 
-  system(*%W{./rgb.rb dump #{file_a} #{tmp}/a.rgb})
-  system(*%W{./rgb.rb dump #{file_b} #{tmp}/b.rgb})
+  system(*%W{./rgb.rb img-to-rgb #{file_a} #{tmp}/a.rgb})
+  system(*%W{./rgb.rb img-to-rgb #{file_b} #{tmp}/b.rgb})
 
   diff = `diff -U10000 --minimal #{tmp}/a.rgb #{tmp}/b.rgb`.lines
   raise 'empty diff' if diff.empty?
@@ -31,8 +31,8 @@ def main file_a, file_b, file_diff
 
   write "#{tmp}/da.rgb", width, colors, a
   write "#{tmp}/db.rgb", width, colors, b
-  system(*%W{./rgb.rb load #{tmp}/da.rgb #{tmp}/da.png})
-  system(*%W{./rgb.rb load #{tmp}/db.rgb #{tmp}/db.png})
+  system(*%W{./rgb.rb rgb-to-img #{tmp}/da.rgb #{tmp}/da.png})
+  system(*%W{./rgb.rb rgb-to-img #{tmp}/db.rgb #{tmp}/db.png})
 
   system(*%W{compare #{tmp}/da.png #{tmp}/db.png #{tmp}/diff.png})
   system(*%W{montage -geometry +4+0 #{tmp}/da.png #{tmp}/diff.png #{tmp}/db.png #{file_diff}})
