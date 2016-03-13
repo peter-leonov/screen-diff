@@ -21,7 +21,7 @@ def main file_a, file_b, file_diff
   raise "different widths: #{width_a} and #{width_b}" if width_a != width_b
   width = width_a
 
-  colors = diff.shift
+  colors = diff.shift[1..-1]
 
   a, b = parse(width, diff)
 
