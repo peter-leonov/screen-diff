@@ -37,6 +37,6 @@ On the left side of the diff you see a bit patched image: the removed parts have
 
 # Guts
 
-ATM the script is pretty simple. It converts both images to a textual format [Netpbm](http://www.imagemagick.org/Usage/formats/#pbmplus_imagemagick) a like but with full RGB support. Then the script uses a plain old `diff` tool to get the actual diff. Next step is to rebuild both images filling the gaps if a diff chung has more minuses than pluses (or vise versa). After that, the script converts the textual image format to PNG and runs the actual ImageMagick `compare` tool.
+ATM the script is pretty simple. It converts both images to a textual format [Netpbm (PPM)](http://www.imagemagick.org/Usage/formats/#pbmplus_imagemagick) a like but with full RGB support. Then the script uses a plain old `diff` tool to get the actual diff. Next step is to rebuild both images filling the gaps if a diff chunk has more minuses than pluses (or vice versa). After that, the script converts the textual image format to PNG and runs the actual ImageMagick `compare` tool.
 
 Ruby code is based on examples from [RMagick User's Guide](http://www.simplesystems.org/RMagick/doc/image2.html).
