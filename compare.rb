@@ -43,13 +43,9 @@ def parse width, diff
   plus = 0
   add = proc do
     if minus < plus
-      (plus - minus).times do
-        a << spacer
-      end
+      (plus - minus).times { a << spacer }
     elsif minus > plus
-      (minus - plus).times do
-        b << spacer
-      end
+      (minus - plus).times { b << spacer }
     end
     minus = 0
     plus = 0
