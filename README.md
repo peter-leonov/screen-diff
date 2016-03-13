@@ -17,6 +17,11 @@ Run:
     # montage: unable to read font bla-bla…
     open diff.png
 
+If montage warning bothers you [install ghostscript](http://stackoverflow.com/questions/13936256/imagemagick-error-while-running-convert-convert-unable-to-read-font/13936374#13936374):
+
+    brew install ghostscript
+
+
 # Why write comparison tool?
 
 Reason to invent the wheel is that ImageMagick's `compare` tool refuses to compare images of mismatching dimensions. The approach made in this tool is to use real textual `diff` command to find rows of two images where a difference starts and then patch the gap with a spacer in a way optimised for diffing interfaces (web pages, applications, anything of fixed width). The result is a pair of the original images but now of the same height then compared by ImageMagick's compare.
