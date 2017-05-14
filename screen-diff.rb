@@ -67,13 +67,13 @@ def parse width, diff
 
   loop do
     if diff.empty?
-      add.call()
+      add.()
       break
     end
     line = diff.shift
     if line[0] == ' '
       # puts ' '
-      add.call()
+      add.()
       a << last_line_a = line[1..-1]
       b << last_line_b = line[1..-1]
     elsif line[0] == '-'
