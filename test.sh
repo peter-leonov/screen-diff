@@ -1,6 +1,17 @@
 #!/bin/sh
 set -e
 
-time ./screen-diff.rb tests/same_height/a.png tests/same_height/b.png tests/same_height/diff.png
-time ./screen-diff.rb tests/example/a.png tests/example/b.png tests/example/diff.png
-time ./screen-diff.rb tests/bigger/a.png tests/bigger/b.png tests/bigger/diff.png
+function check_diff {
+  if [[ -n $(git status -s ./tests) ]]; then
+    echo The reference diff has been changed >&2
+    exit 1
+  fi
+}
+
+for TEST in tests/*; do
+  echo Testing $TEST...
+  time -p ./screen-diff.rb $TEST/a.png $TEST/b.png $TEST/diff.png
+  check_diff
+  echo OK
+  echo
+done
