@@ -3,14 +3,18 @@ require 'tmpdir'
 require 'fileutils'
 require 'rmagick'
 
-def main file_a, file_b, file_diff
+def main file_a, file_b, file_result
   tmp = Dir.mktmpdir("compare-rb")
 
   img_to_rgb(file_a, "#{tmp}/a.rgb")
   img_to_rgb(file_b, "#{tmp}/b.rgb")
 
   diff = `diff -U10000 --minimal #{tmp}/a.rgb #{tmp}/b.rgb`.lines
-  raise 'empty diff' if diff.empty?
+  if diff.empty?
+    # just compare identical images as compare would
+    final_cut(tmp, file_a, file_b, file_result)
+    return
+  end
 
   head = diff.shift(3)
   raise 'wrong diff header' unless head[0]['---'] && head[1]['+++'] && head[2]['@@']
@@ -30,18 +34,22 @@ def main file_a, file_b, file_diff
 
   a, b = parse(width, diff)
 
-  write "#{tmp}/da.rgb", width, colors, a
-  write "#{tmp}/db.rgb", width, colors, b
+  write_rgb "#{tmp}/da.rgb", width, colors, a
+  write_rgb "#{tmp}/db.rgb", width, colors, b
 
   rgb_to_img("#{tmp}/da.rgb", "#{tmp}/da.png")
   rgb_to_img("#{tmp}/db.rgb", "#{tmp}/db.png")
 
-  system(*%W{compare #{tmp}/da.png #{tmp}/db.png #{tmp}/diff.png})
-  system(*%W{montage -geometry +4+0 #{tmp}/da.png #{tmp}/diff.png #{tmp}/db.png #{file_diff}})
+  final_cut(tmp, "#{tmp}/da.png", "#{tmp}/db.png", file_result)
 ensure
   FileUtils.remove_entry tmp
 end
 
+def final_cut tmp, file_a, file_b, file_result
+  file_diff = "#{tmp}/diff.png"
+  system(*%W{compare #{file_a} #{file_b} #{file_diff}})
+  system(*%W{montage -geometry +4+0 #{file_a} #{file_diff} #{file_b} #{file_result}})
+end
 
 def parse width, diff
   spacer = ([65535] * (width * 3)).join(' ') + "\n"
@@ -90,7 +98,7 @@ def parse width, diff
   return a, b
 end
 
-def write name, width, colors, lines
+def write_rgb name, width, colors, lines
   File.open(name, 'w') do |f|
     f.puts 'RGB'
     f.puts "#{width} #{lines.size}"
