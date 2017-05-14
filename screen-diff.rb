@@ -11,7 +11,7 @@ def main file_a, file_b, file_result
 
   diff = `diff -U10000 --minimal #{tmp}/a.rgb #{tmp}/b.rgb`.lines
   if diff.empty?
-    # just compare identical images as compare would
+    # just compare identical images as compare normally would
     final_cut(tmp, file_a, file_b, file_result)
     return
   end
@@ -21,7 +21,11 @@ def main file_a, file_b, file_result
   raise 'wrong format' unless diff.shift['RGB']
 
   size_a = diff.shift
-  raise 'TODO: do nothing for same size images' if size_a[0] == ' '
+  if size_a[0] == ' '
+    # just compare same height images as compare normally would
+    final_cut(tmp, file_a, file_b, file_result)
+    return
+  end
   size_b = diff.shift
   raise 'wrong sizes diff' unless size_a[0] == '-' && size_b[0] == '+'
   size_rex = /.(\d+) (\d+)/
