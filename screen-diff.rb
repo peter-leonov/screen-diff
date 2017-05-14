@@ -1,12 +1,13 @@
 #!/usr/bin/env ruby
 require 'tmpdir'
 require 'fileutils'
+require 'rmagick'
 
 def main file_a, file_b, file_diff
   tmp = Dir.mktmpdir("compare-rb")
 
-  system(*%W{./rgb.rb img-to-rgb #{file_a} #{tmp}/a.rgb})
-  system(*%W{./rgb.rb img-to-rgb #{file_b} #{tmp}/b.rgb})
+  img_to_rgb(file_a, "#{tmp}/a.rgb")
+  img_to_rgb(file_b, "#{tmp}/b.rgb")
 
   diff = `diff -U10000 --minimal #{tmp}/a.rgb #{tmp}/b.rgb`.lines
   raise 'empty diff' if diff.empty?
@@ -31,8 +32,9 @@ def main file_a, file_b, file_diff
 
   write "#{tmp}/da.rgb", width, colors, a
   write "#{tmp}/db.rgb", width, colors, b
-  system(*%W{./rgb.rb rgb-to-img #{tmp}/da.rgb #{tmp}/da.png})
-  system(*%W{./rgb.rb rgb-to-img #{tmp}/db.rgb #{tmp}/db.png})
+
+  rgb_to_img("#{tmp}/da.rgb", "#{tmp}/da.png")
+  rgb_to_img("#{tmp}/db.rgb", "#{tmp}/db.png")
 
   system(*%W{compare #{tmp}/da.png #{tmp}/db.png #{tmp}/diff.png})
   system(*%W{montage -geometry +4+0 #{tmp}/da.png #{tmp}/diff.png #{tmp}/db.png #{file_diff}})
@@ -96,6 +98,41 @@ def write name, width, colors, lines
     lines.each { |line| f.print line }
   end
 end
+
+def img_to_rgb file_src, file_dst
+  img = Magick::Image.read(file_src).first
+  w = img.columns
+  h = img.rows
+  io_dst = File.open(file_dst, 'w')
+  io_dst.puts "RGB"
+  io_dst.puts "#{w} #{h}"
+  h.times do |y|
+    # x, y, columns, rows -> array
+    io_dst.puts img.export_pixels(0, y, w, 1, 'RGB').join(' ')
+  end
+  io_dst.close
+end
+
+def rgb_to_img file_src, file_dst
+  io_src = File.open(file_src, 'r')
+  format = io_src.readline.chomp
+  raise 'wrong format' unless format == 'RGB'
+  _, w, h = /^(\d+) (\d+)/.match(io_src.readline).to_a
+  raise 'wrong format' unless w && h
+  w = w.to_i
+  h = h.to_i
+
+  img = Magick::Image.new(w, h)
+
+  h.times do |y|
+    pixels = io_src.readline.split(' ').map(&:to_i)
+    # x, y, columns, rows, format, array
+    img.import_pixels(0, y, w, 1, 'RGB', pixels)
+  end
+
+  img.write(file_dst)
+end
+
 
 raise 'three args needed: a b diff' unless ARGV.length == 3
 main *ARGV
