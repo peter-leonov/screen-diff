@@ -25,7 +25,7 @@ Run:
     git clone https://github.com/peter-leonov/screen-diff.git
     cd screen-diff
     bundle
-    ./compare.rb tests/1/b.png tests/1/a.png diff.png
+    ./screen-diff.rb tests/1/b.png tests/1/a.png diff.png
     # montage: unable to read font bla-bla…
     open diff.png
 
