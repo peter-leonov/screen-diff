@@ -7,11 +7,11 @@ This tool is a (very slow ruby based) prototype for a screenshots diffing tool w
 
 Two screenshots of a slightly different height:
 
-![a](tests/1/a.png) ![b](tests/1/b.png)
+![a](tests/example/a.png) ![b](tests/example/b.png)
 
 The diff:
 
-![a](tests/1/diff.png)
+![a](tests/example/diff.png)
 
 On the left side of the diff you see a bit patched image: the removed parts have been replaced with the last pixels row from the image (kinda like Content-Aware Scale™). Swapping `a` and `b` does not change the diff in the middle.
 
