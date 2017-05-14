@@ -18,9 +18,13 @@ On the left side of the diff you see a bit patched image: the removed parts have
 
 ## Usage
 
+For now, for Mac OS here only.
+
 Prerequisites:
 
-    brew install imagemagick
+    brew install imagemagick@6
+    brew link imagemagick@6 --force
+    brew install pkg-config
     brew install ruby
     gem install bundler
 
@@ -29,11 +33,13 @@ Run:
     git clone https://github.com/peter-leonov/screen-diff.git
     cd screen-diff
     bundle
-    ./screen-diff.rb tests/1/b.png tests/1/a.png diff.png
+    bundle exec ./screen-diff.rb tests/1/b.png tests/1/a.png diff.png
     # montage: unable to read font bla-bla…
     open diff.png
 
-If montage warning bothers you [install ghostscript](http://stackoverflow.com/questions/13936256/imagemagick-error-while-running-convert-convert-unable-to-read-font/13936374#13936374):
+Sorry for the mess with ImageMagick gem, installing it has been always a magic.
+
+Also, if montage warning bothers you [install ghostscript](http://stackoverflow.com/questions/13936256/imagemagick-error-while-running-convert-convert-unable-to-read-font/13936374#13936374):
 
     brew install ghostscript
 

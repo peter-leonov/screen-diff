@@ -1,7 +1,7 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    rmagick (2.15.4)
+    rmagick (2.16.0)
 
 PLATFORMS
   ruby
@@ -10,4 +10,4 @@ DEPENDENCIES
   rmagick
 
 BUNDLED WITH
-   1.10.6
+   1.14.6
